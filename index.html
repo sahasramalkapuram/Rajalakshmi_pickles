@@ -134,9 +134,7 @@
             </div>
         </div>
 
-        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Populated dynamically -->
-        </div>
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
     <!-- Our Heritage / Story Section -->
@@ -152,20 +150,6 @@
                     <p class="text-neutral-600 leading-relaxed">
                         Matured naturally under the sun and blended with pure cold-pressed sesame oil and hand-ground spices, our pickles bring the true warmth of home-cooked meals to your dining table.
                     </p>
-                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-neutral-200">
-                        <div>
-                            <p class="font-serif text-2xl font-bold text-pickle-700">100%</p>
-                            <p class="text-xs text-neutral-500 font-medium">Homemade Taste</p>
-                        </div>
-                        <div>
-                            <p class="font-serif text-2xl font-bold text-pickle-700">0%</p>
-                            <p class="text-xs text-neutral-500 font-medium">Artificial Preservatives</p>
-                        </div>
-                        <div>
-                            <p class="font-serif text-2xl font-bold text-pickle-700">10+</p>
-                            <p class="text-xs text-neutral-500 font-medium">Authentic Varieties</p>
-                        </div>
-                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <img src="https://images.unsplash.com/photo-1608797178974-1533dcb6536e?auto=format&fit=crop&w=600&q=80" alt="Pickle making" class="rounded-xl shadow-md object-cover h-64 w-full">
@@ -341,7 +325,7 @@
             <div class="flex items-center justify-between pb-4 border-b border-neutral-200 mb-6">
                 <div>
                     <h3 class="font-serif text-2xl font-bold text-pickle-900"><i class="fa-solid fa-shield-halved text-terracotta-600 mr-2"></i> Store Owner Dashboard</h3>
-                    <p class="text-xs text-neutral-500">Manage products, prices, availability, discounts, and customer orders.</p>
+                    <p class="text-xs text-neutral-500">Manage products, custom sizes, prices, and customer orders.</p>
                 </div>
                 <button onclick="openAddProductModal()" class="bg-pickle-700 hover:bg-pickle-800 text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg shadow transition">
                     <i class="fa-solid fa-plus mr-1.5"></i> Add New Pickle
@@ -376,9 +360,9 @@
         </div>
     </div>
 
-    <!-- Add / Edit Product Modal with Individual Quantity Prices -->
+    <!-- Add / Edit Product Modal with Dynamic Size Rows -->
     <div id="addProductModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative my-6">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative my-6 max-h-[90vh] overflow-y-auto">
             <button onclick="closeAddProductModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 id="modalProductTitle" class="font-serif text-xl font-bold text-pickle-900 mb-4">Add New Pickle</h3>
             <form id="productForm" onsubmit="saveProduct(event)" class="space-y-3">
@@ -404,22 +388,14 @@
                     </div>
                 </div>
 
-                <!-- Price inputs for each weight quantity -->
-                <div class="p-3 bg-pickle-50 rounded-xl border border-pickle-100 space-y-2">
-                    <p class="text-xs font-bold text-pickle-900 uppercase">Set Prices for Each Jar Size (₹)</p>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-bold text-neutral-600">250g Price</label>
-                            <input type="number" id="price250g" required class="w-full px-2 py-1.5 rounded border border-neutral-300 text-sm outline-none bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-neutral-600">500g Price</label>
-                            <input type="number" id="price500g" required class="w-full px-2 py-1.5 rounded border border-neutral-300 text-sm outline-none bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-neutral-600">1kg Price</label>
-                            <input type="number" id="price1kg" required class="w-full px-2 py-1.5 rounded border border-neutral-300 text-sm outline-none bg-white">
-                        </div>
+                <!-- Dynamic Sizes & Prices Builder -->
+                <div class="p-4 bg-pickle-50 rounded-xl border border-pickle-100 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-bold text-pickle-900 uppercase">Custom Quantities & Prices</label>
+                        <button type="button" onclick="addSizeRow()" class="text-xs bg-pickle-700 text-white px-2.5 py-1 rounded hover:bg-pickle-800 transition"><i class="fa-solid fa-plus mr-1"></i> Add Size</button>
+                    </div>
+                    <div id="sizeRowsContainer" class="space-y-2">
+                        <!-- Size rows injected dynamically -->
                     </div>
                 </div>
 
@@ -526,12 +502,8 @@
             const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
 
             filtered.forEach(p => {
-                if (!p.sizes && p.price) {
-                    p.sizes = [
-                        { weight: "250g", price: Math.round(p.price * 0.6) },
-                        { weight: "500g", price: p.price },
-                        { weight: "1kg", price: p.price * 1.9 }
-                    ];
+                if (!p.sizes || p.sizes.length === 0) {
+                    p.sizes = [{ weight: "500g", price: p.price || 349 }];
                 }
                 const defaultSize = p.sizes[0];
 
@@ -641,7 +613,7 @@
                         <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-lg">
                         <div>
                             <h4 class="font-semibold text-sm text-pickle-900">${item.name}</h4>
-                            <p class="text-xs text-neutral-500">₹${item.price} x ${item.qty}</p>
+                            <p class="text-xs text-neutral-500">₹${item.price} x${item.qty}</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -793,232 +765,4 @@
                     div.className = "p-4 border rounded-xl bg-pickle-50 space-y-2";
                     div.innerHTML = `
                         <div class="flex justify-between items-center text-xs font-bold text-neutral-600">
-                            <span>${o.id} &bull; ${o.date}</span>
-                            <span class="bg-emerald-700 text-white px-2 py-0.5 rounded">${o.status}</span>
-                        </div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs text-neutral-600">Deliver to: <span class="font-medium text-neutral-800">${o.address}</span></p>
-                                <p class="text-xs text-neutral-600 mt-0.5">Payment: <span class="font-medium text-neutral-800">${o.paymentMethod}</span></p>
-                            </div>
-                            <span class="font-serif text-lg font-bold text-pickle-900">₹${o.total}</span>
-                        </div>
-                        <div class="pt-2 border-t border-pickle-100 text-xs text-neutral-700">
-                            <span class="font-semibold">Items Ordered:</span> ${o.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
-            }
-            modal.classList.remove('hidden');
-        }
-
-        function closeCustomerOrdersModal() {
-            document.getElementById('customerOrdersModal').classList.add('hidden');
-        }
-
-        function logoutUser() {
-            currentUser = null;
-            localStorage.removeItem('rp_user');
-            updateAuthUI();
-            alert("Logged out successfully.");
-        }
-
-        function updateAuthUI() {
-            if (!currentUser) {
-                document.getElementById('authContainer').classList.remove('hidden');
-                document.getElementById('userProfileBadge').classList.add('hidden');
-                document.getElementById('navOwnerPortal').classList.add('hidden');
-                return;
-            }
-
-            document.getElementById('authContainer').classList.add('hidden');
-            const badge = document.getElementById('userProfileBadge');
-            badge.classList.remove('hidden');
-            badge.classList.add('flex');
-            document.getElementById('userNameDisplay').innerText = currentUser.isAdmin ? currentUser.name : currentUser.identifier;
-
-            if (currentUser.isAdmin) {
-                document.getElementById('navOwnerPortal').classList.remove('hidden');
-                document.getElementById('navOwnerPortal').classList.add('flex');
-            }
-        }
-
-        function openOwnerPortalModal() {
-            document.getElementById('ownerPortalModal').classList.remove('hidden');
-            renderAdminProducts();
-            renderAdminOrders();
-        }
-
-        function closeOwnerPortalModal() {
-            document.getElementById('ownerPortalModal').classList.add('hidden');
-        }
-
-        function switchAdminTab(tab) {
-            if (tab === 'products') {
-                document.getElementById('adminTabProductsBtn').className = "pb-3 text-sm font-semibold border-b-2 border-pickle-700 text-pickle-900";
-                document.getElementById('adminTabOrdersBtn').className = "pb-3 text-sm font-semibold text-neutral-500 border-b-2 border-transparent";
-                document.getElementById('adminProductsView').classList.remove('hidden');
-                document.getElementById('adminOrdersView').classList.add('hidden');
-            } else {
-                document.getElementById('adminTabOrdersBtn').className = "pb-3 text-sm font-semibold border-b-2 border-pickle-700 text-pickle-900";
-                document.getElementById('adminTabProductsBtn').className = "pb-3 text-sm font-semibold text-neutral-500 border-b-2 border-transparent";
-                document.getElementById('adminOrdersView').classList.remove('hidden');
-                document.getElementById('adminProductsView').classList.add('hidden');
-            }
-        }
-
-        function renderAdminProducts() {
-            const tbody = document.getElementById('adminProductTableBody');
-            tbody.innerHTML = '';
-            products.forEach(p => {
-                if (!p.sizes && p.price) {
-                    p.sizes = [{ weight: "500g", price: p.price }];
-                }
-                const sizesStr = p.sizes.map(s => `${s.weight}: ₹${s.price}`).join(', ');
-
-                const tr = document.createElement('tr');
-                tr.className = "border-b hover:bg-neutral-50";
-                tr.innerHTML = `
-                    <td class="p-3 flex items-center space-x-3">
-                        <img src="${p.image}" class="w-10 h-10 object-cover rounded-md">
-                        <span class="font-semibold text-pickle-900">${p.name}</span>
-                    </td>
-                    <td class="p-3 uppercase text-xs font-bold text-neutral-600">${p.category}</td>
-                    <td class="p-3 text-xs font-medium text-neutral-700">${sizesStr}</td>
-                    <td class="p-3"><span class="text-xs font-semibold px-2 py-0.5 rounded ${p.stock === 'In Stock' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${p.stock}</span></td>
-                    <td class="p-3 text-right space-x-2">
-                        <button onclick="editProduct(${p.id})" class="text-pickle-700 hover:text-pickle-900 text-xs font-semibold px-2 py-1 bg-pickle-50 rounded"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteProduct(${p.id})" class="text-red-600 hover:text-red-800 text-xs font-semibold px-2 py-1 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderAdminOrders() {
-            const container = document.getElementById('adminOrdersList');
-            container.innerHTML = '';
-            if (orders.length === 0) {
-                container.innerHTML = `<p class="text-center text-neutral-500 py-8 text-sm">No customer orders yet.</p>`;
-                return;
-            }
-
-            orders.forEach(o => {
-                const div = document.createElement('div');
-                div.className = "p-4 border rounded-xl bg-pickle-50 space-y-2";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center text-xs font-bold text-neutral-600">
-                        <span>${o.id} &bull; ${o.date}</span>
-                        <span class="bg-pickle-700 text-white px-2 py-0.5 rounded">${o.paymentMethod}</span>
-                    </div>
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h4 class="font-bold text-sm text-pickle-900">${o.customerName} (${o.phone})</h4>
-                            <p class="text-xs text-neutral-600">Address: ${o.address}</p>
-                        </div>
-                        <span class="font-serif text-lg font-bold text-pickle-900">₹${o.total}</span>
-                    </div>
-                    <div class="pt-2 border-t border-pickle-100 text-xs text-neutral-700">
-                        <span class="font-semibold">Items:</span> ${o.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function openAddProductModal() {
-            document.getElementById('modalProductTitle').innerText = "Add New Pickle";
-            document.getElementById('productForm').reset();
-            document.getElementById('prodEditId').value = "";
-            document.getElementById('price250g').value = "";
-            document.getElementById('price500g').value = "";
-            document.getElementById('price1kg').value = "";
-            document.getElementById('addProductModal').classList.remove('hidden');
-        }
-
-        function closeAddProductModal() {
-            document.getElementById('addProductModal').classList.add('hidden');
-        }
-
-        function editProduct(id) {
-            const p = products.find(item => item.id === id);
-            if (!p) return;
-            document.getElementById('modalProductTitle').innerText = "Edit Pickle Details";
-            document.getElementById('prodEditId').value = p.id;
-            document.getElementById('prodName').value = p.name;
-            document.getElementById('prodCategory').value = p.category;
-            
-            // Populate individual size prices if available
-            const s250 = p.sizes ? p.sizes.find(s => s.weight === "250g") : null;
-            const s500 = p.sizes ? p.sizes.find(s => s.weight === "500g") : null;
-            const s1kg = p.sizes ? p.sizes.find(s => s.weight === "1kg") : null;
-
-            document.getElementById('price250g').value = s250 ? s250.price : (p.price ? Math.round(p.price * 0.6) : 199);
-            document.getElementById('price500g').value = s500 ? s500.price : (p.price ? p.price : 349);
-            document.getElementById('price1kg').value = s1kg ? s1kg.price : (p.price ? p.price * 1.9 : 649);
-
-            document.getElementById('prodDiscount').value = p.discount || "";
-            document.getElementById('prodStock').value = p.stock;
-            document.getElementById('prodImage').value = p.image;
-            document.getElementById('prodDesc').value = p.desc;
-            document.getElementById('addProductModal').classList.remove('hidden');
-        }
-
-        function saveProduct(event) {
-            event.preventDefault();
-            const editId = document.getElementById('prodEditId').value;
-            const name = document.getElementById('prodName').value;
-            const category = document.getElementById('prodCategory').value;
-            
-            const p250 = parseFloat(document.getElementById('price250g').value);
-            const p500 = parseFloat(document.getElementById('price500g').value);
-            const p1kg = parseFloat(document.getElementById('price1kg').value);
-
-            const discount = document.getElementById('prodDiscount').value;
-            const stock = document.getElementById('prodStock').value;
-            const image = document.getElementById('prodImage').value;
-            const desc = document.getElementById('prodDesc').value;
-
-            const sizes = [
-                { weight: "250g", price: p250 },
-                { weight: "500g", price: p500 },
-                { weight: "1kg", price: p1kg }
-            ];
-
-            if (editId) {
-                const p = products.find(item => item.id == editId);
-                if (p) {
-                    p.name = name;
-                    p.category = category;
-                    p.sizes = sizes;
-                    p.discount = discount;
-                    p.stock = stock;
-                    p.image = image;
-                    p.desc = desc;
-                }
-            } else {
-                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                products.push({ id: newId, name, category, sizes, discount, stock, image, desc });
-            }
-
-            localStorage.setItem('rp_products', JSON.stringify(products));
-            closeAddProductModal();
-            renderAdminProducts();
-            renderCatalog();
-            alert("Pickle catalog updated successfully with custom sizes & prices!");
-        }
-
-        function deleteProduct(id) {
-            if (confirm("Are you sure you want to remove this pickle from the catalog?")) {
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('rp_products', JSON.stringify(products));
-                renderAdminProducts();
-                renderCatalog();
-            }
-        }
-
-        renderCatalog();
-    </script>
-</body>
-</html>
+                            <span>${o.id} &bull
