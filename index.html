@@ -433,14 +433,110 @@
 
     <!-- Application JavaScript -->
     <script>
-        let products = [
-            { id: 1, name: "Andhra Mango Pickle", category: "veg", price: 349, discount: "10% OFF", stock: "In Stock", image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80", desc: "Classic raw mango pieces sun-dried and blended with pure sesame oil and fiery red chili." },
-            { id: 2, name: "Spicy Garlic Pickle", category: "veg", price: 299, discount: "", stock: "In Stock", image: "https://images.unsplash.com/photo-1608797178974-1533dcb6536e?auto=format&fit=crop&w=600&q=80", desc: "Hand-peeled garlic cloves matured in a tangy tamarind and spice paste." },
-            { id: 3, name: "Andhra Chicken Pickle", category: "nonveg", price: 549, discount: "Best Seller", stock: "In Stock", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", desc: "Tender boneless chicken chunks cooked in traditional spices and cold-pressed oil." },
-            { id: 4, name: "Prawns Pickle", category: "nonveg", price: 649, discount: "", stock: "In Stock", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80", desc: "Fresh coastal prawns roasted with aromatic spices and authentic coastal masalas." },
-            { id: 5, name: "Lemon Thokku Pickle", category: "veg", price: 249, discount: "", stock: "In Stock", image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80", desc: "Tangy ripe lemons pickled with fenugreek and rock salt for a zesty kick." },
-            { id: 6, name: "Mutton Boneless Pickle", category: "nonveg", price: 699, discount: "15% OFF", stock: "In Stock", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", desc: "Rich and succulent mutton pieces slow-cooked with rich spices." }
-        ];
+       let products = [
+    { 
+        id: 1, 
+        name: "Andhra Mango Pickle", 
+        category: "veg", 
+        discount: "10% OFF", 
+        stock: "In Stock", 
+        image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80", 
+        desc: "Classic raw mango pieces sun-dried and blended with pure sesame oil and fiery red chili.",
+        sizes: [
+            { weight: "250g", price: 199 },
+            { weight: "500g", price: 349 },
+            { weight: "1kg", price: 649 }
+        ]
+    },
+    { 
+        id: 2, 
+        name: "Spicy Garlic Pickle", 
+        category: "veg", 
+        discount: "", 
+        stock: "In Stock", 
+        image: "https://images.unsplash.com/photo-1608797178974-1533dcb6536e?auto=format&fit=crop&w=600&q=80", 
+        desc: "Hand-peeled garlic cloves matured in a tangy tamarind and spice paste.",
+        sizes: [
+            { weight: "250g", price: 179 },
+            { weight: "500g", price: 299 },
+            { weight: "1kg", price: 579 }
+        ]
+    },
+    { 
+        id: 3, 
+        name: "Andhra Chicken Pickle", 
+        category: "nonveg", 
+        discount: "Best Seller", 
+        stock: "In Stock", 
+        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", 
+        desc: "Tender boneless chicken chunks cooked in traditional spices and cold-pressed oil.",
+        sizes: [
+            { weight: "250g", price: 299 },
+            { weight: "500g", price: 549 },
+            { weight: "1kg", price: 1049 }
+        ]
+    },
+    { 
+        id: 4, 
+        name: "Prawns Pickle", 
+        category: "nonveg", 
+        discount: "", 
+        stock: "In Stock", 
+        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80", 
+        desc: "Fresh coastal prawns roasted with aromatic spices and authentic coastal masalas.",
+        sizes: [
+            { weight: "250g", price: 349 },
+            { weight: "500g", price: 649 },
+            { weight: "1kg", price: 1249 }
+        ]
+    }
+];
+
+// Render Catalog with Size Selector
+function renderCatalog(filter = 'all') {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = '';
+    const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+    filtered.forEach(p => {
+        // Default to the first size (e.g., 250g or 500g)
+        const defaultSize = p.sizes[0];
+        
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl overflow-hidden border border-pickle-100 shadow-sm hover:shadow-lg transition flex flex-col justify-between";
+        card.innerHTML = `
+            <div>
+                <div class="relative h-52 overflow-hidden bg-neutral-100">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
+                    ${p.discount ? `<span class="absolute top-3 left-3 bg-terracotta-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">${p.discount}</span>` : ''}
+                    <span class="absolute top-3 right-3 bg-white/95 text-neutral-800 text-xs font-semibold px-2.5 py-1 rounded-md shadow">${p.stock}</span>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-serif text-lg font-bold text-pickle-900">${p.name}</h3>
+                        <span class="text-xs uppercase px-2 py-0.5 rounded font-bold ${p.category === 'veg' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${p.category}</span>
+                    </div>
+                    <p class="text-xs text-neutral-500 line-clamp-2">${p.desc}</p>
+                    
+                    <!-- Size Selector Dropdown -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Select Quantity / Size:</label>
+                        <select id="size-select-${p.id}" onchange="updatePriceDisplay(${p.id})" class="w-full px-3 py-2 text-xs font-semibold rounded-lg border border-neutral-300 bg-pickle-50 outline-none">
+                            ${p.sizes.map((s, idx) => `<option value="${idx}">${s.weight} - ₹${s.price}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 pt-0 flex items-center justify-between border-t border-neutral-100 mt-2">
+                <span id="price-display-${p.id}" class="font-serif text-xl font-bold text-pickle-900">₹${defaultSize.price}</span>
+                <button onclick="addSelectedSizeToCart(${p.id})" ${p.stock === 'Out of Stock' ? 'disabled' : ''} class="bg-pickle-700 hover:bg-pickle-800 disabled:bg-neutral-300 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition shadow-sm">
+                    <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
+                </button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
 
         let cart = [];
         let orders = [];
@@ -456,41 +552,43 @@
             currentUser = JSON.parse(localStorage.getItem('rp_user'));
             updateAuthUI();
         }
+function updatePriceDisplay(productId) {
+    const product = products.find(p => p.id === productId);
+    const selectElement = document.getElementById(`size-select-${productId}`);
+    const selectedIndex = selectElement.value;
+    const selectedSize = product.sizes[selectedIndex];
+    
+    document.getElementById(`price-display-${productId}`).innerText = `₹${selectedSize.price}`;
+}
 
-        function renderCatalog(filter = 'all') {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
-            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+// Add specifically selected size to cart
+function addSelectedSizeToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    const selectElement = document.getElementById(`size-select-${productId}`);
+    const selectedSize = product.sizes[selectElement.value];
 
-            filtered.forEach(p => {
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl overflow-hidden border border-pickle-100 shadow-sm hover:shadow-lg transition flex flex-col justify-between";
-                card.innerHTML = `
-                    <div>
-                        <div class="relative h-52 overflow-hidden bg-neutral-100">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
-                            ${p.discount ? `<span class="absolute top-3 left-3 bg-terracotta-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">${p.discount}</span>` : ''}
-                            <span class="absolute top-3 right-3 bg-white/95 text-neutral-800 text-xs font-semibold px-2.5 py-1 rounded-md shadow">${p.stock}</span>
-                        </div>
-                        <div class="p-6 space-y-2">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-serif text-lg font-bold text-pickle-900">${p.name}</h3>
-                                <span class="text-xs uppercase px-2 py-0.5 rounded font-bold ${p.category === 'veg' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${p.category}</span>
-                            </div>
-                            <p class="text-xs text-neutral-500 line-clamp-2">${p.desc}</p>
-                        </div>
-                    </div>
-                    <div class="p-6 pt-0 flex items-center justify-between">
-                        <span class="font-serif text-xl font-bold text-pickle-900">₹${p.price}</span>
-                        <button onclick="addToCart(${p.id})" ${p.stock === 'Out of Stock' ? 'disabled' : ''} class="bg-pickle-700 hover:bg-pickle-800 disabled:bg-neutral-300 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
-                        </button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+    // Unique cart item per product and size combination
+    const cartItemId = `${productId}-${selectedSize.weight}`;
+    const existing = cart.find(item => item.cartItemId === cartItemId);
 
+    if (existing) {
+        existing.qty++;
+    } else {
+        cart.push({
+            cartItemId: cartItemId,
+            id: product.id,
+            name: `${product.name} (${selectedSize.weight})`,
+            price: selectedSize.price,
+            weight: selectedSize.weight,
+            image: product.image,
+            qty: 1
+        });
+    }
+
+    updateCartBadge();
+    renderCartItems();
+    toggleCartDrawer();
+}
         function filterProducts(category) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.className = "filter-btn px-5 py-2 rounded-lg text-sm font-medium bg-white text-neutral-700 border border-neutral-300 hover:bg-pickle-50 transition";
