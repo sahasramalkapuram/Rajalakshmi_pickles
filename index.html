@@ -613,7 +613,7 @@
                         <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-lg">
                         <div>
                             <h4 class="font-semibold text-sm text-pickle-900">${item.name}</h4>
-                            <p class="text-xs text-neutral-500">₹${item.price} x${item.qty}</p>
+                            <p class="text-xs text-neutral-500">₹${item.price} x ${item.qty}</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -765,4 +765,249 @@
                     div.className = "p-4 border rounded-xl bg-pickle-50 space-y-2";
                     div.innerHTML = `
                         <div class="flex justify-between items-center text-xs font-bold text-neutral-600">
-                            <span>${o.id} &bull
+                            <span>${o.id} &bull; ${o.date}</span>
+                            <span class="bg-emerald-700 text-white px-2 py-0.5 rounded">${o.status}</span>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs text-neutral-600">Deliver to: <span class="font-medium text-neutral-800">${o.address}</span></p>
+                                <p class="text-xs text-neutral-600 mt-0.5">Payment: <span class="font-medium text-neutral-800">${o.paymentMethod}</span></p>
+                            </div>
+                            <span class="font-serif text-lg font-bold text-pickle-900">₹${o.total}</span>
+                        </div>
+                        <div class="pt-2 border-t border-pickle-100 text-xs text-neutral-700">
+                            <span class="font-semibold">Items Ordered:</span> ${o.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeCustomerOrdersModal() {
+            document.getElementById('customerOrdersModal').classList.add('hidden');
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('rp_user');
+            updateAuthUI();
+            alert("Logged out successfully.");
+        }
+
+        function updateAuthUI() {
+            if (!currentUser) {
+                document.getElementById('authContainer').classList.remove('hidden');
+                document.getElementById('userProfileBadge').classList.add('hidden');
+                document.getElementById('navOwnerPortal').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('authContainer').classList.add('hidden');
+            const badge = document.getElementById('userProfileBadge');
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+            document.getElementById('userNameDisplay').innerText = currentUser.isAdmin ? currentUser.name : currentUser.identifier;
+
+            if (currentUser.isAdmin) {
+                document.getElementById('navOwnerPortal').classList.remove('hidden');
+                document.getElementById('navOwnerPortal').classList.add('flex');
+            }
+        }
+
+        function openOwnerPortalModal() {
+            document.getElementById('ownerPortalModal').classList.remove('hidden');
+            renderAdminProducts();
+            renderAdminOrders();
+        }
+
+        function closeOwnerPortalModal() {
+            document.getElementById('ownerPortalModal').classList.add('hidden');
+        }
+
+        function switchAdminTab(tab) {
+            if (tab === 'products') {
+                document.getElementById('adminTabProductsBtn').className = "pb-3 text-sm font-semibold border-b-2 border-pickle-700 text-pickle-900";
+                document.getElementById('adminTabOrdersBtn').className = "pb-3 text-sm font-semibold text-neutral-500 border-b-2 border-transparent";
+                document.getElementById('adminProductsView').classList.remove('hidden');
+                document.getElementById('adminOrdersView').classList.add('hidden');
+            } else {
+                document.getElementById('adminTabOrdersBtn').className = "pb-3 text-sm font-semibold border-b-2 border-pickle-700 text-pickle-900";
+                document.getElementById('adminTabProductsBtn').className = "pb-3 text-sm font-semibold text-neutral-500 border-b-2 border-transparent";
+                document.getElementById('adminOrdersView').classList.remove('hidden');
+                document.getElementById('adminProductsView').classList.add('hidden');
+            }
+        }
+
+        function renderAdminProducts() {
+            const tbody = document.getElementById('adminProductTableBody');
+            tbody.innerHTML = '';
+            products.forEach(p => {
+                if (!p.sizes || p.sizes.length === 0) {
+                    p.sizes = [{ weight: "500g", price: p.price || 349 }];
+                }
+                const sizesStr = p.sizes.map(s => `${s.weight}: ₹${s.price}`).join(', ');
+
+                const tr = document.createElement('tr');
+                tr.className = "border-b hover:bg-neutral-50";
+                tr.innerHTML = `
+                    <td class="p-3 flex items-center space-x-3">
+                        <img src="${p.image}" class="w-10 h-10 object-cover rounded-md">
+                        <span class="font-semibold text-pickle-900">${p.name}</span>
+                    </td>
+                    <td class="p-3 uppercase text-xs font-bold text-neutral-600">${p.category}</td>
+                    <td class="p-3 text-xs font-medium text-neutral-700">${sizesStr}</td>
+                    <td class="p-3"><span class="text-xs font-semibold px-2 py-0.5 rounded ${p.stock === 'In Stock' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${p.stock}</span></td>
+                    <td class="p-3 text-right space-x-2">
+                        <button onclick="editProduct(${p.id})" class="text-pickle-700 hover:text-pickle-900 text-xs font-semibold px-2 py-1 bg-pickle-50 rounded"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteProduct(${p.id})" class="text-red-600 hover:text-red-800 text-xs font-semibold px-2 py-1 bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAdminOrders() {
+            const container = document.getElementById('adminOrdersList');
+            container.innerHTML = '';
+            if (orders.length === 0) {
+                container.innerHTML = `<p class="text-center text-neutral-500 py-8 text-sm">No customer orders yet.</p>`;
+                return;
+            }
+
+            orders.forEach(o => {
+                const div = document.createElement('div');
+                div.className = "p-4 border rounded-xl bg-pickle-50 space-y-2";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center text-xs font-bold text-neutral-600">
+                        <span>${o.id} &bull; ${o.date}</span>
+                        <span class="bg-pickle-700 text-white px-2 py-0.5 rounded">${o.paymentMethod}</span>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-sm text-pickle-900">${o.customerName} (${o.phone})</h4>
+                            <p class="text-xs text-neutral-600">Address: ${o.address}</p>
+                        </div>
+                        <span class="font-serif text-lg font-bold text-pickle-900">₹${o.total}</span>
+                    </div>
+                    <div class="pt-2 border-t border-pickle-100 text-xs text-neutral-700">
+                        <span class="font-semibold">Items:</span> ${o.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Dynamic Size Rows inside Add/Edit Modal
+        function addSizeRow(weight = '', price = '') {
+            const container = document.getElementById('sizeRowsContainer');
+            const row = document.createElement('div');
+            row.className = "flex items-center space-x-2 size-row";
+            row.innerHTML = `
+                <input type="text" placeholder="Size (e.g. 250g)" value="${weight}" class="size-weight w-1/2 px-2.5 py-1.5 rounded border border-neutral-300 text-xs outline-none bg-white font-medium">
+                <input type="number" placeholder="Price (₹)" value="${price}" class="size-price w-1/2 px-2.5 py-1.5 rounded border border-neutral-300 text-xs outline-none bg-white font-medium">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 px-2 py-1 text-xs"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(row);
+        }
+
+        function openAddProductModal() {
+            document.getElementById('modalProductTitle').innerText = "Add New Pickle";
+            document.getElementById('productForm').reset();
+            document.getElementById('prodEditId').value = "";
+            document.getElementById('sizeRowsContainer').innerHTML = "";
+            addSizeRow('250g', '');
+            addSizeRow('500g', '');
+            addSizeRow('1kg', '');
+            document.getElementById('addProductModal').classList.remove('hidden');
+        }
+
+        function closeAddProductModal() {
+            document.getElementById('addProductModal').classList.add('hidden');
+        }
+
+        function editProduct(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('modalProductTitle').innerText = "Edit Pickle Details";
+            document.getElementById('prodEditId').value = p.id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodCategory').value = p.category;
+            
+            const container = document.getElementById('sizeRowsContainer');
+            container.innerHTML = "";
+            if (p.sizes && p.sizes.length > 0) {
+                p.sizes.forEach(s => addSizeRow(s.weight, s.price));
+            } else {
+                addSizeRow('500g', p.price || 349);
+            }
+
+            document.getElementById('prodDiscount').value = p.discount || "";
+            document.getElementById('prodStock').value = p.stock;
+            document.getElementById('prodImage').value = p.image;
+            document.getElementById('prodDesc').value = p.desc;
+            document.getElementById('addProductModal').classList.remove('hidden');
+        }
+
+        function saveProduct(event) {
+            event.preventDefault();
+            const editId = document.getElementById('prodEditId').value;
+            const name = document.getElementById('prodName').value;
+            const category = document.getElementById('prodCategory').value;
+            const discount = document.getElementById('prodDiscount').value;
+            const stock = document.getElementById('prodStock').value;
+            const image = document.getElementById('prodImage').value;
+            const desc = document.getElementById('prodDesc').value;
+
+            const sizeRows = document.querySelectorAll('.size-row');
+            const sizes = [];
+            sizeRows.forEach(row => {
+                const w = row.querySelector('.size-weight').value.trim();
+                const pr = parseFloat(row.querySelector('.size-price').value);
+                if (w && !isNaN(pr)) {
+                    sizes.push({ weight: w, price: pr });
+                }
+            });
+
+            if (sizes.length === 0) {
+                alert("Please add at least one size and price!");
+                return;
+            }
+
+            if (editId) {
+                const p = products.find(item => item.id == editId);
+                if (p) {
+                    p.name = name;
+                    p.category = category;
+                    p.sizes = sizes;
+                    p.discount = discount;
+                    p.stock = stock;
+                    p.image = image;
+                    p.desc = desc;
+                }
+            } else {
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.push({ id: newId, name, category, sizes, discount, stock, image, desc });
+            }
+
+            localStorage.setItem('rp_products', JSON.stringify(products));
+            closeAddProductModal();
+            renderAdminProducts();
+            renderCatalog();
+            alert("Pickle catalog updated successfully!");
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Are you sure you want to remove this pickle from the catalog?")) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('rp_products', JSON.stringify(products));
+                renderAdminProducts();
+                renderCatalog();
+            }
+        }
+
+        renderCatalog();
+    </script>
+</body>
+</html>
