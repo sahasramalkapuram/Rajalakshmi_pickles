@@ -302,7 +302,7 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Phone Number or Email</label>
-                        <input type="text" id="authInputId" class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-pickle-600 outline-none text-sm" placeholder="mobile no or email">
+                        <input type="text" id="authInputId" class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-pickle-600 outline-none text-sm" placeholder="9515025035 or email@domain.com">
                     </div>
                     <button onclick="proceedAuth()" class="w-full bg-pickle-700 hover:bg-pickle-800 text-white font-medium py-3 rounded-lg transition shadow">
                         Continue
@@ -330,9 +330,7 @@
             <button onclick="closeCustomerOrdersModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 class="font-serif text-2xl font-bold text-pickle-900 mb-1">Your Order History</h3>
             <p class="text-xs text-neutral-500 mb-6">Review your previous orders placed with Rajalakshmi Pickles.</p>
-            <div id="customerOrdersList" class="space-y-4">
-                <!-- Populated dynamically -->
-            </div>
+            <div id="customerOrdersList" class="space-y-4"></div>
         </div>
     </div>
 
@@ -362,8 +360,7 @@
                             <tr class="bg-pickle-50 text-neutral-700 border-b">
                                 <th class="p-3 font-semibold">Pickle</th>
                                 <th class="p-3 font-semibold">Category</th>
-                                <th class="p-3 font-semibold">Price (₹)</th>
-                                <th class="p-3 font-semibold">Discount</th>
+                                <th class="p-3 font-semibold">Sizes & Prices</th>
                                 <th class="p-3 font-semibold">Status</th>
                                 <th class="p-3 font-semibold text-right">Actions</th>
                             </tr>
@@ -379,9 +376,9 @@
         </div>
     </div>
 
-    <!-- Add / Edit Product Modal -->
+    <!-- Add / Edit Product Modal with Individual Quantity Prices -->
     <div id="addProductModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative my-6">
             <button onclick="closeAddProductModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 id="modalProductTitle" class="font-serif text-xl font-bold text-pickle-900 mb-4">Add New Pickle</h3>
             <form id="productForm" onsubmit="saveProduct(event)" class="space-y-3">
@@ -399,16 +396,6 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Price (₹)</label>
-                        <input type="number" id="prodPrice" required class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Discount Tag</label>
-                        <input type="text" id="prodDiscount" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none" placeholder="e.g. 10% OFF">
-                    </div>
-                    <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Availability</label>
                         <select id="prodStock" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none bg-white">
                             <option value="In Stock">In Stock</option>
@@ -416,9 +403,35 @@
                         </select>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Image URL</label>
-                    <input type="url" id="prodImage" required class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none" placeholder="https://images.unsplash.com/...">
+
+                <!-- Price inputs for each weight quantity -->
+                <div class="p-3 bg-pickle-50 rounded-xl border border-pickle-100 space-y-2">
+                    <p class="text-xs font-bold text-pickle-900 uppercase">Set Prices for Each Jar Size (₹)</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-600">250g Price</label>
+                            <input type="number" id="price250g" required class="w-full px-2 py-1.5 rounded border border-neutral-300 text-sm outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-600">500g Price</label>
+                            <input type="number" id="price500g" required class="w-full px-2 py-1.5 rounded border border-neutral-300 text-sm outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-600">1kg Price</label>
+                            <input type="number" id="price1kg" required class="w-full px-2 py-1.5 rounded border border-neutral-300 text-sm outline-none bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Discount Tag</label>
+                        <input type="text" id="prodDiscount" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none" placeholder="e.g. 10% OFF">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Image URL</label>
+                        <input type="url" id="prodImage" required class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none" placeholder="https://images.unsplash.com/...">
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Description / Ingredients</label>
@@ -433,110 +446,64 @@
 
     <!-- Application JavaScript -->
     <script>
-       let products = [
-    { 
-        id: 1, 
-        name: "Andhra Mango Pickle", 
-        category: "veg", 
-        discount: "10% OFF", 
-        stock: "In Stock", 
-        image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80", 
-        desc: "Classic raw mango pieces sun-dried and blended with pure sesame oil and fiery red chili.",
-        sizes: [
-            { weight: "250g", price: 199 },
-            { weight: "500g", price: 349 },
-            { weight: "1kg", price: 649 }
-        ]
-    },
-    { 
-        id: 2, 
-        name: "Spicy Garlic Pickle", 
-        category: "veg", 
-        discount: "", 
-        stock: "In Stock", 
-        image: "https://images.unsplash.com/photo-1608797178974-1533dcb6536e?auto=format&fit=crop&w=600&q=80", 
-        desc: "Hand-peeled garlic cloves matured in a tangy tamarind and spice paste.",
-        sizes: [
-            { weight: "250g", price: 179 },
-            { weight: "500g", price: 299 },
-            { weight: "1kg", price: 579 }
-        ]
-    },
-    { 
-        id: 3, 
-        name: "Andhra Chicken Pickle", 
-        category: "nonveg", 
-        discount: "Best Seller", 
-        stock: "In Stock", 
-        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", 
-        desc: "Tender boneless chicken chunks cooked in traditional spices and cold-pressed oil.",
-        sizes: [
-            { weight: "250g", price: 299 },
-            { weight: "500g", price: 549 },
-            { weight: "1kg", price: 1049 }
-        ]
-    },
-    { 
-        id: 4, 
-        name: "Prawns Pickle", 
-        category: "nonveg", 
-        discount: "", 
-        stock: "In Stock", 
-        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80", 
-        desc: "Fresh coastal prawns roasted with aromatic spices and authentic coastal masalas.",
-        sizes: [
-            { weight: "250g", price: 349 },
-            { weight: "500g", price: 649 },
-            { weight: "1kg", price: 1249 }
-        ]
-    }
-];
-
-// Render Catalog with Size Selector
-function renderCatalog(filter = 'all') {
-    const grid = document.getElementById('productGrid');
-    grid.innerHTML = '';
-    const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
-
-    filtered.forEach(p => {
-        // Default to the first size (e.g., 250g or 500g)
-        const defaultSize = p.sizes[0];
-        
-        const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl overflow-hidden border border-pickle-100 shadow-sm hover:shadow-lg transition flex flex-col justify-between";
-        card.innerHTML = `
-            <div>
-                <div class="relative h-52 overflow-hidden bg-neutral-100">
-                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
-                    ${p.discount ? `<span class="absolute top-3 left-3 bg-terracotta-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">${p.discount}</span>` : ''}
-                    <span class="absolute top-3 right-3 bg-white/95 text-neutral-800 text-xs font-semibold px-2.5 py-1 rounded-md shadow">${p.stock}</span>
-                </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex justify-between items-start">
-                        <h3 class="font-serif text-lg font-bold text-pickle-900">${p.name}</h3>
-                        <span class="text-xs uppercase px-2 py-0.5 rounded font-bold ${p.category === 'veg' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${p.category}</span>
-                    </div>
-                    <p class="text-xs text-neutral-500 line-clamp-2">${p.desc}</p>
-                    
-                    <!-- Size Selector Dropdown -->
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Select Quantity / Size:</label>
-                        <select id="size-select-${p.id}" onchange="updatePriceDisplay(${p.id})" class="w-full px-3 py-2 text-xs font-semibold rounded-lg border border-neutral-300 bg-pickle-50 outline-none">
-                            ${p.sizes.map((s, idx) => `<option value="${idx}">${s.weight} - ₹${s.price}</option>`).join('')}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="p-6 pt-0 flex items-center justify-between border-t border-neutral-100 mt-2">
-                <span id="price-display-${p.id}" class="font-serif text-xl font-bold text-pickle-900">₹${defaultSize.price}</span>
-                <button onclick="addSelectedSizeToCart(${p.id})" ${p.stock === 'Out of Stock' ? 'disabled' : ''} class="bg-pickle-700 hover:bg-pickle-800 disabled:bg-neutral-300 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition shadow-sm">
-                    <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
-                </button>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
+        let products = [
+            { 
+                id: 1, 
+                name: "Andhra Mango Pickle", 
+                category: "veg", 
+                discount: "10% OFF", 
+                stock: "In Stock", 
+                image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80", 
+                desc: "Classic raw mango pieces sun-dried and blended with pure sesame oil and fiery red chili.",
+                sizes: [
+                    { weight: "250g", price: 199 },
+                    { weight: "500g", price: 349 },
+                    { weight: "1kg", price: 649 }
+                ]
+            },
+            { 
+                id: 2, 
+                name: "Spicy Garlic Pickle", 
+                category: "veg", 
+                discount: "", 
+                stock: "In Stock", 
+                image: "https://images.unsplash.com/photo-1608797178974-1533dcb6536e?auto=format&fit=crop&w=600&q=80", 
+                desc: "Hand-peeled garlic cloves matured in a tangy tamarind and spice paste.",
+                sizes: [
+                    { weight: "250g", price: 179 },
+                    { weight: "500g", price: 299 },
+                    { weight: "1kg", price: 579 }
+                ]
+            },
+            { 
+                id: 3, 
+                name: "Andhra Chicken Pickle", 
+                category: "nonveg", 
+                discount: "Best Seller", 
+                stock: "In Stock", 
+                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", 
+                desc: "Tender boneless chicken chunks cooked in traditional spices and cold-pressed oil.",
+                sizes: [
+                    { weight: "250g", price: 299 },
+                    { weight: "500g", price: 549 },
+                    { weight: "1kg", price: 1049 }
+                ]
+            },
+            { 
+                id: 4, 
+                name: "Prawns Pickle", 
+                category: "nonveg", 
+                discount: "", 
+                stock: "In Stock", 
+                image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80", 
+                desc: "Fresh coastal prawns roasted with aromatic spices and authentic coastal masalas.",
+                sizes: [
+                    { weight: "250g", price: 349 },
+                    { weight: "500g", price: 649 },
+                    { weight: "1kg", price: 1249 }
+                ]
+            }
+        ];
 
         let cart = [];
         let orders = [];
@@ -544,7 +511,7 @@ function renderCatalog(filter = 'all') {
         let pendingIdentifier = "";
         const ADMIN_PHONE = "9515025035";
         const ADMIN_EMAIL = "sahasramalkapuram35@gmail.com";
-        const ADMIN_SECRET_PIN = "9948";
+        const ADMIN_SECRET_PIN = "1947";
 
         if (localStorage.getItem('rp_products')) products = JSON.parse(localStorage.getItem('rp_products'));
         if (localStorage.getItem('rp_orders')) orders = JSON.parse(localStorage.getItem('rp_orders'));
@@ -552,43 +519,92 @@ function renderCatalog(filter = 'all') {
             currentUser = JSON.parse(localStorage.getItem('rp_user'));
             updateAuthUI();
         }
-function updatePriceDisplay(productId) {
-    const product = products.find(p => p.id === productId);
-    const selectElement = document.getElementById(`size-select-${productId}`);
-    const selectedIndex = selectElement.value;
-    const selectedSize = product.sizes[selectedIndex];
-    
-    document.getElementById(`price-display-${productId}`).innerText = `₹${selectedSize.price}`;
-}
 
-// Add specifically selected size to cart
-function addSelectedSizeToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    const selectElement = document.getElementById(`size-select-${productId}`);
-    const selectedSize = product.sizes[selectElement.value];
+        function renderCatalog(filter = 'all') {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
 
-    // Unique cart item per product and size combination
-    const cartItemId = `${productId}-${selectedSize.weight}`;
-    const existing = cart.find(item => item.cartItemId === cartItemId);
+            filtered.forEach(p => {
+                if (!p.sizes && p.price) {
+                    p.sizes = [
+                        { weight: "250g", price: Math.round(p.price * 0.6) },
+                        { weight: "500g", price: p.price },
+                        { weight: "1kg", price: p.price * 1.9 }
+                    ];
+                }
+                const defaultSize = p.sizes[0];
 
-    if (existing) {
-        existing.qty++;
-    } else {
-        cart.push({
-            cartItemId: cartItemId,
-            id: product.id,
-            name: `${product.name} (${selectedSize.weight})`,
-            price: selectedSize.price,
-            weight: selectedSize.weight,
-            image: product.image,
-            qty: 1
-        });
-    }
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl overflow-hidden border border-pickle-100 shadow-sm hover:shadow-lg transition flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-52 overflow-hidden bg-neutral-100">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
+                            ${p.discount ? `<span class="absolute top-3 left-3 bg-terracotta-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">${p.discount}</span>` : ''}
+                            <span class="absolute top-3 right-3 bg-white/95 text-neutral-800 text-xs font-semibold px-2.5 py-1 rounded-md shadow">${p.stock}</span>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-serif text-lg font-bold text-pickle-900">${p.name}</h3>
+                                <span class="text-xs uppercase px-2 py-0.5 rounded font-bold ${p.category === 'veg' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${p.category}</span>
+                            </div>
+                            <p class="text-xs text-neutral-500 line-clamp-2">${p.desc}</p>
+                            
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Select Jar Size:</label>
+                                <select id="size-select-${p.id}" onchange="updatePriceDisplay(${p.id})" class="w-full px-3 py-2 text-xs font-semibold rounded-lg border border-neutral-300 bg-pickle-50 outline-none">
+                                    ${p.sizes.map((s, idx) => `<option value="${idx}">${s.weight} - ₹${s.price}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 flex items-center justify-between border-t border-neutral-100 mt-2">
+                        <span id="price-display-${p.id}" class="font-serif text-xl font-bold text-pickle-900">₹${defaultSize.price}</span>
+                        <button onclick="addSelectedSizeToCart(${p.id})" ${p.stock === 'Out of Stock' ? 'disabled' : ''} class="bg-pickle-700 hover:bg-pickle-800 disabled:bg-neutral-300 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
 
-    updateCartBadge();
-    renderCartItems();
-    toggleCartDrawer();
-}
+        function updatePriceDisplay(productId) {
+            const product = products.find(p => p.id === productId);
+            const selectElement = document.getElementById(`size-select-${productId}`);
+            const selectedIndex = selectElement.value;
+            const selectedSize = product.sizes[selectedIndex];
+            document.getElementById(`price-display-${productId}`).innerText = `₹${selectedSize.price}`;
+        }
+
+        function addSelectedSizeToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const selectElement = document.getElementById(`size-select-${productId}`);
+            const selectedSize = product.sizes[selectElement.value];
+
+            const cartItemId = `${productId}-${selectedSize.weight}`;
+            const existing = cart.find(item => item.cartItemId === cartItemId);
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({
+                    cartItemId: cartItemId,
+                    id: product.id,
+                    name: `${product.name} (${selectedSize.weight})`,
+                    price: selectedSize.price,
+                    weight: selectedSize.weight,
+                    image: product.image,
+                    qty: 1
+                });
+            }
+
+            updateCartBadge();
+            renderCartItems();
+            toggleCartDrawer();
+        }
+
         function filterProducts(category) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.className = "filter-btn px-5 py-2 rounded-lg text-sm font-medium bg-white text-neutral-700 border border-neutral-300 hover:bg-pickle-50 transition";
@@ -600,19 +616,6 @@ function addSelectedSizeToCart(productId) {
         function toggleCartDrawer() {
             document.getElementById('cartDrawer').classList.toggle('hidden');
             renderCartItems();
-        }
-
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            const existing = cart.find(item => item.id === productId);
-            if (existing) {
-                existing.qty++;
-            } else {
-                cart.push({ ...product, qty: 1 });
-            }
-            updateCartBadge();
-            renderCartItems();
-            toggleCartDrawer();
         }
 
         function updateCartBadge() {
@@ -642,9 +645,9 @@ function addSelectedSizeToCart(productId) {
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button onclick="changeQty(${item.id}, -1)" class="w-7 h-7 rounded bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold">-</button>
+                        <button onclick="changeQty('${item.cartItemId}', -1)" class="w-7 h-7 rounded bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold">-</button>
                         <span class="text-sm font-semibold">${item.qty}</span>
-                        <button onclick="changeQty(${item.id}, 1)" class="w-7 h-7 rounded bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold">+</button>
+                        <button onclick="changeQty('${item.cartItemId}', 1)" class="w-7 h-7 rounded bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold">+</button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -652,11 +655,11 @@ function addSelectedSizeToCart(productId) {
             document.getElementById('cartSubtotal').innerText = `₹${subtotal}`;
         }
 
-        function changeQty(id, delta) {
-            const item = cart.find(i => i.id === id);
+        function changeQty(cartItemId, delta) {
+            const item = cart.find(i => i.cartItemId === cartItemId);
             if (item) {
                 item.qty += delta;
-                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+                if (item.qty <= 0) cart = cart.filter(i => i.cartItemId !== cartItemId);
             }
             updateCartBadge();
             renderCartItems();
@@ -721,7 +724,6 @@ function addSelectedSizeToCart(productId) {
             }
         }
 
-        // Authentication & Customer Recognition Flow
         function openAuthModal() {
             document.getElementById('authModal').classList.remove('hidden');
             document.getElementById('authStep1').classList.remove('hidden');
@@ -781,7 +783,6 @@ function addSelectedSizeToCart(productId) {
             const container = document.getElementById('customerOrdersList');
             container.innerHTML = '';
 
-            // Filter orders matching customer's phone number or identifier
             const myOrders = orders.filter(o => o.phone === currentUser.identifier || o.customerName === currentUser.identifier);
 
             if (myOrders.length === 0) {
@@ -871,6 +872,11 @@ function addSelectedSizeToCart(productId) {
             const tbody = document.getElementById('adminProductTableBody');
             tbody.innerHTML = '';
             products.forEach(p => {
+                if (!p.sizes && p.price) {
+                    p.sizes = [{ weight: "500g", price: p.price }];
+                }
+                const sizesStr = p.sizes.map(s => `${s.weight}: ₹${s.price}`).join(', ');
+
                 const tr = document.createElement('tr');
                 tr.className = "border-b hover:bg-neutral-50";
                 tr.innerHTML = `
@@ -879,8 +885,7 @@ function addSelectedSizeToCart(productId) {
                         <span class="font-semibold text-pickle-900">${p.name}</span>
                     </td>
                     <td class="p-3 uppercase text-xs font-bold text-neutral-600">${p.category}</td>
-                    <td class="p-3 font-semibold">₹${p.price}</td>
-                    <td class="p-3"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded">${p.discount || 'None'}</span></td>
+                    <td class="p-3 text-xs font-medium text-neutral-700">${sizesStr}</td>
                     <td class="p-3"><span class="text-xs font-semibold px-2 py-0.5 rounded ${p.stock === 'In Stock' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${p.stock}</span></td>
                     <td class="p-3 text-right space-x-2">
                         <button onclick="editProduct(${p.id})" class="text-pickle-700 hover:text-pickle-900 text-xs font-semibold px-2 py-1 bg-pickle-50 rounded"><i class="fa-solid fa-pen"></i></button>
@@ -926,6 +931,9 @@ function addSelectedSizeToCart(productId) {
             document.getElementById('modalProductTitle').innerText = "Add New Pickle";
             document.getElementById('productForm').reset();
             document.getElementById('prodEditId').value = "";
+            document.getElementById('price250g').value = "";
+            document.getElementById('price500g').value = "";
+            document.getElementById('price1kg').value = "";
             document.getElementById('addProductModal').classList.remove('hidden');
         }
 
@@ -940,8 +948,17 @@ function addSelectedSizeToCart(productId) {
             document.getElementById('prodEditId').value = p.id;
             document.getElementById('prodName').value = p.name;
             document.getElementById('prodCategory').value = p.category;
-            document.getElementById('prodPrice').value = p.price;
-            document.getElementById('prodDiscount').value = p.discount;
+            
+            // Populate individual size prices if available
+            const s250 = p.sizes ? p.sizes.find(s => s.weight === "250g") : null;
+            const s500 = p.sizes ? p.sizes.find(s => s.weight === "500g") : null;
+            const s1kg = p.sizes ? p.sizes.find(s => s.weight === "1kg") : null;
+
+            document.getElementById('price250g').value = s250 ? s250.price : (p.price ? Math.round(p.price * 0.6) : 199);
+            document.getElementById('price500g').value = s500 ? s500.price : (p.price ? p.price : 349);
+            document.getElementById('price1kg').value = s1kg ? s1kg.price : (p.price ? p.price * 1.9 : 649);
+
+            document.getElementById('prodDiscount').value = p.discount || "";
             document.getElementById('prodStock').value = p.stock;
             document.getElementById('prodImage').value = p.image;
             document.getElementById('prodDesc').value = p.desc;
@@ -953,18 +970,28 @@ function addSelectedSizeToCart(productId) {
             const editId = document.getElementById('prodEditId').value;
             const name = document.getElementById('prodName').value;
             const category = document.getElementById('prodCategory').value;
-            const price = parseFloat(document.getElementById('prodPrice').value);
+            
+            const p250 = parseFloat(document.getElementById('price250g').value);
+            const p500 = parseFloat(document.getElementById('price500g').value);
+            const p1kg = parseFloat(document.getElementById('price1kg').value);
+
             const discount = document.getElementById('prodDiscount').value;
             const stock = document.getElementById('prodStock').value;
             const image = document.getElementById('prodImage').value;
             const desc = document.getElementById('prodDesc').value;
+
+            const sizes = [
+                { weight: "250g", price: p250 },
+                { weight: "500g", price: p500 },
+                { weight: "1kg", price: p1kg }
+            ];
 
             if (editId) {
                 const p = products.find(item => item.id == editId);
                 if (p) {
                     p.name = name;
                     p.category = category;
-                    p.price = price;
+                    p.sizes = sizes;
                     p.discount = discount;
                     p.stock = stock;
                     p.image = image;
@@ -972,14 +999,14 @@ function addSelectedSizeToCart(productId) {
                 }
             } else {
                 const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                products.push({ id: newId, name, category, price, discount, stock, image, desc });
+                products.push({ id: newId, name, category, sizes, discount, stock, image, desc });
             }
 
             localStorage.setItem('rp_products', JSON.stringify(products));
             closeAddProductModal();
             renderAdminProducts();
             renderCatalog();
-            alert("Pickle catalog updated successfully!");
+            alert("Pickle catalog updated successfully with custom sizes & prices!");
         }
 
         function deleteProduct(id) {
