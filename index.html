@@ -286,7 +286,7 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Phone Number or Email</label>
-                        <input type="text" id="authInputId" class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-pickle-600 outline-none text-sm" placeholder="9515025035 or email@domain.com">
+                        <input type="text" id="authInputId" class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-pickle-600 outline-none text-sm" placeholder="mobile no (or) email-id">
                     </div>
                     <button onclick="proceedAuth()" class="w-full bg-pickle-700 hover:bg-pickle-800 text-white font-medium py-3 rounded-lg transition shadow">
                         Continue
@@ -487,7 +487,7 @@
         let pendingIdentifier = "";
         const ADMIN_PHONE = "9515025035";
         const ADMIN_EMAIL = "sahasramalkapuram35@gmail.com";
-        const ADMIN_SECRET_PIN = "1947";
+        const ADMIN_SECRET_PIN = "9948";
 
         if (localStorage.getItem('rp_products')) products = JSON.parse(localStorage.getItem('rp_products'));
         if (localStorage.getItem('rp_orders')) orders = JSON.parse(localStorage.getItem('rp_orders'));
@@ -734,7 +734,7 @@
         function verifyOwnerPin() {
             const pin = document.getElementById('authOwnerPin').value.trim();
             if (pin !== ADMIN_SECRET_PIN) {
-                alert("Incorrect Owner PIN! (Hint for testing: your secret PIN is 1947)");
+                alert("Incorrect Owner PIN!);
                 return;
             }
 
